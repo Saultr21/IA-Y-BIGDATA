@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  <XMI xmi.version="2.1" xmlns:xmi="http://schema.omg.org/spec/XMI/2.1" xmlns:uml="http://www.omg.org/spec/UML/20090901">
+  <uml:Model xmi:type="uml:Model" name="UMLModel">
+    <packagedElement xmi:type="uml:Class" name="a">
+      <ownedAttribute visibility="+" name="a" type="int" />
+      <ownedAttribute visibility="+" name="b" type="float[]" />
+      <ownedOperation visibility="-" name="f" type="void" />
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" name="b">
+      <ownedAttribute visibility="-" name="b1" type="String" />
+      <ownedOperation visibility="#" name="g" type="boolean[]" />
+      <ownedOperation visibility="-" name="nc" type="Integer" />
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" name="c">
+      <ownedOperation visibility="-" name="w" type="ArrayList&lt;Float&gt;" />
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" name="d">
+      <ownedAttribute visibility="+" name="bb" type="String" />
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" name="e">
+      <ownedAttribute visibility="-" name="c" type="String[]" />
+      <ownedAttribute visibility="-" name="c2" type="HashMap&lt;Integer,e&gt;" />
+    </packagedElement>
+    <packagedElement xmi:type="uml:Generalization" memberEnd="a b">
+    </packagedElement>
+    <packagedElement xmi:type="uml:DirectedAssociation" memberEnd="a c">
+      <ownedEnd type="a" multiplicity1="1" />
+      <ownedEnd type="c" multiplicity2="*" />
+    </packagedElement>
+    <packagedElement xmi:type="uml:DirectedAssociation" memberEnd="c b">
+      <ownedEnd type="c" multiplicity1="1" />
+      <ownedEnd type="b" multiplicity2="*" />
+    </packagedElement>
+    <packagedElement xmi:type="uml:DirectedAssociation" memberEnd="a a">
+      <ownedEnd type="a" multiplicity1="1" />
+      <ownedEnd type="a" multiplicity2="*" />
+    </packagedElement>
+    <packagedElement xmi:type="uml:Composition" memberEnd="d c">
+      <ownedEnd type="d" multiplicity1="1" />
+      <ownedEnd type="c" multiplicity2="*" />
+    </packagedElement>
+    <packagedElement xmi:type="uml:Aggregation" memberEnd="d b">
+      <ownedEnd type="d" multiplicity1="1" />
+      <ownedEnd type="b" multiplicity2="*" />
+    </packagedElement>
+    <packagedElement xmi:type="uml:Dependency" memberEnd="e d">
+    </packagedElement>
+    <packagedElement xmi:type="uml:Association" memberEnd="e c">
+      <ownedEnd type="e" multiplicity1="4" />
+      <ownedEnd type="c" multiplicity2="2" />
+    </packagedElement>
+  </uml:Model>
+</XMI>
