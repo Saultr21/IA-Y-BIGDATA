@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  <XMI xmi.version="2.1" xmlns:xmi="http://schema.omg.org/spec/XMI/2.1" xmlns:uml="http://www.omg.org/spec/UML/20090901">
+  <uml:Model xmi:type="uml:Model" name="UMLModel">
+    <packagedElement xmi:type="uml:Class" name="Clase1">
+      <ownedAttribute visibility="+" name="Nombre" type="String" />
+      <ownedOperation visibility="+" name="Añadir" type="" />
+    </packagedElement>
+    <packagedElement xmi:type="uml:Class" name="Clase2">
+      <ownedAttribute visibility="+" name="Numero" type="int" />
+      <ownedAttribute visibility="+" name="Direccion" type="String" />
+    </packagedElement>
+    <packagedElement xmi:type="uml:DirectedAssociation" memberEnd="Clase1 Clase2">
+      <ownedEnd type="Clase1" multiplicity1="1" />
+      <ownedEnd type="Clase2" multiplicity2="*" />
+    </packagedElement>
+  </uml:Model>
+</XMI>

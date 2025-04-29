@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Diagrama UML de Clases</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        canvas {
+            border: 1px solid black;
+            display: block;
+            max-width: 100%;
+            height: auto;
+        }
+
+        .code-container {
+            margin-top: 0;
+        }
+
+        pre.code-box {
+            white-space: pre-wrap;
+            border: 1px solid #dee2e6;
+            padding: 10px;
+            max-height: 350px;
+            overflow: auto;
+            background: #f8f9fa;
+            font-family: Consolas, Monaco, "Courier New", monospace;
+            border-radius: .25rem;
+            margin-bottom: 1rem;
+        }
+
+        .form-container .row>div {
+            margin-bottom: 0.5rem !important;
+        }
+
+        .form-container label {
+            margin-bottom: 0.2rem;
+        }
+
+        .main-content-row {
+            align-items: flex-start;
+        }
+
+        .vertical-separator {
+            border-left: 2px solid #000000;
+            height: 50px;
+            margin-left: 0.5rem;
+            margin-right: 0.5rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container-fluid mt-3"> 
+        <div class="form-container border p-3 rounded mb-3">
+            <div class="row g-2 align-items-end"> 
+                <div class="col-md-auto">
+                    <label for="classNameInput" class="form-label">Clase:</label>
+                    <input type="text" id="classNameInput" class="form-control form-control-sm">
+                </div>
+                <div class="col-md-auto">
+                    <button onclick="addClass()" class="btn btn-primary btn-sm">Agregar Clase</button>
+                </div>
+                <div class="col-md-auto d-flex align-items-center">
+                    <div class="vertical-separator"></div>
+                </div>
+                <div class="col-md-auto">
+                    <label for="attributeInput" class="form-label">Atributo:</label>
+                    <input type="text" id="attributeInput" class="form-control form-control-sm">
+                </div>
+                <div class="col-md-auto">
+                    <label for="attributeVisibility" class="form-label">Visibilidad:</label>
+                    <select id="attributeVisibility" class="form-select form-select-sm">
+                        <option value="+">public (+)</option>
+                        <option value="-">private (-)</option>
+                        <option value="#">protected (#)</option>
+                    </select>
+                </div>
+                <div class="col-md-auto">
+                    <label for="attributeType" class="form-label">Tipo:</label>
+                    <input type="text" id="attributeType" class="form-control form-control-sm">
+                </div>
+                <div class="col-md-auto">
+                    <button onclick="addAttribute()" class="btn btn-secondary btn-sm">Añadir Atributo</button>
+                </div>
+                <div class="col-md-auto d-flex align-items-center">
+                    <div class="vertical-separator"></div>
+                </div>
+                <div class="col-md-auto">
+                    <label for="methodInput" class="form-label">Método:</label>
+                    <input type="text" id="methodInput" class="form-control form-control-sm">
+                </div>
+                <div class="col-md-auto">
+                    <label for="methodVisibility" class="form-label">Visibilidad:</label>
+                    <select id="methodVisibility" class="form-select form-select-sm">
+                        <option value="+">public (+)</option>
+                        <option value="-">private (-)</option>
+                        <option value="#">protected (#)</option>
+                    </select>
+                </div>
+                <div class="col-md-auto">
+                    <label for="methodType" class="form-label">Tipo:</label>
+                    <input type="text" id="methodType" class="form-control form-control-sm">
+                </div>
+                <div class="col-md-auto">
+                    <button onclick="addMethod()" class="btn btn-secondary btn-sm">Añadir Método</button>
+                </div>
+            </div>
+            <hr class="my-3"> 
+            <div class="row g-2 align-items-end">
+                <div class="col-md-auto">
+                    <label for="fromClassSelect" class="form-label">Origen:</label>
+                    <select id="fromClassSelect" class="form-select form-select-sm"></select>
+                </div>
+                <div class="col-md-auto">
+                    <label for="multiplicityFrom" class="form-label">Mult:</label>
+                    <input type="text" id="multiplicityFrom" placeholder="1" class="form-control form-control-sm"
+                        style="width: 50px;">
+                </div>
+                <div class="col-md-auto">
+                    <label for="relationType" class="form-label">Relación:</label>
+                    <select id="relationType" class="form-select form-select-sm">
+                        <option value="herencia">Herencia</option>
+                        <option value="asociación">Asociación</option>
+                        <option value="asociaciónDireccional">Asociación direccional</option>
+                        <option value="dependencia">Dependencia</option>
+                        <option value="composición">Composición</option>
+                        <option value="agregación">Agregación</option>
+                    </select>
+                </div>
+                <div class="col-md-auto">
+                    <label for="multiplicityTo" class="form-label">Mult:</label>
+                    <input type="text" id="multiplicityTo" placeholder="*" class="form-control form-control-sm"
+                        style="width: 50px;">
+                </div>
+                <div class="col-md-auto">
+                    <label for="toClassSelect" class="form-label">Destino:</label>
+                    <select id="toClassSelect" class="form-select form-select-sm"></select>
+                </div>
+                <div class="col-md-auto">
+                    <button onclick="addRelation()" class="btn btn-secondary btn-sm">Agregar Relación</button>
+                </div>
+            </div>
+            <hr class="my-3"> 
+            <div class="row g-2 mt-4">
+                <div class="col-auto">
+                    <a href="/download_xmi" download="diagram.xmi" class="btn btn-info btn-sm">Descargar XMI</a>
+                </div>
+                <div class="col-auto">
+                    <button onclick="generateJava()" class="btn btn-success btn-sm">Generar Java</button>
+                </div>
+                <div class="col-auto">
+                    <button onclick="generatePython()" class="btn btn-warning btn-sm">Generar Python</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="row main-content-row">
+            <div class="col-md-6">
+                <canvas id="umlCanvas" width="1024" height="668"></canvas>
+            </div>
+            <div class="col-md-6">
+                <div class="code-container">
+                    <div>
+                        <h3>Código Java</h3>
+                        <pre id="javaCodeOutput" class="code-box">Aún no se ha generado código.</pre>
+                        <a href="/download_java" download="output.java" class="btn btn-outline-dark btn-sm mb-3">Descargar Java</a>
+                    </div>
+                    <div>
+                        <h3>Código Python</h3>
+                        <pre id="pythonCodeOutput" class="code-box">Aún no se ha generado código.</pre>
+                        <a href="/download_python" download="output.py" class="btn btn-outline-dark btn-sm">Descargar Python</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="static/script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
