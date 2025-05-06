@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Celsius a Fahrenheit</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <style>
+      body {
+        background-color: #f8f9fa;
+      }
+      .converter-container {
+        max-width: 600px;
+        margin: 50px auto;
+        padding: 30px;
+        background-color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+      }
+      #resultado {
+        font-weight: bold;
+        font-size: 1.5rem;
+        text-align: center;
+        margin-top: 20px;
+        padding: 15px;
+        background-color: #e9ecef;
+        border-radius: 5px;
+      }
+      .form-label span {
+        font-weight: bold;
+        color: #0d6efd;
+      }
+    </style>
+
+  </head>
+  <body>
+
+    <div class="container converter-container">
+      <div class="text-center mb-4">
+        <h1 class="display-5 fw-bold">Fahrenheit a Celsius</h1>
+        <p class="lead">Conversi&oacute;n usando Tensorflow.js</p>
+      </div>
+
+      <form>
+        <div class="mb-3">
+          <label for="celsius" class="form-label">Grados Celsius: <span id="lbl-celsius">0</span></label>
+          <input type="range" class="form-range" min="-200" max="200" id="celsius" value="0" oninput="cambiarCelsius();">
+          <div class="form-text">Desliza para seleccionar la temperatura en Celsius.</div>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Resultado en Fahrenheit:</label>
+          <div id="resultado">
+            0 grados celsius son 32 grados fahrenheit
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@2.0.0/dist/tf.min.js"></script>
+
+    <script type="text/javascript">
+      var modelo = null;
+
+      (async () => {
+          console.log("Cargando modelo...");
+          try {
+            modelo = await tf.loadLayersModel("web_model/model.json");
+            console.log("Modelo cargado.");
+            cambiarCelsius(); // Actualizar el valor inicial al cargar el modelo
+          } catch (error) {
+            console.error("Error al cargar el modelo:", error);
+            document.getElementById("resultado").innerHTML = "Error al cargar el modelo.";
+          }
+      })();
+      function cambiarCelsius() {
+        var celsiusInput = document.getElementById("celsius");
+        var celsius = celsiusInput.value;
+        document.getElementById("lbl-celsius").innerHTML = celsius;
+        var resultadoDiv = document.getElementById("resultado");
+        if (modelo != null) {
+          try {
+            var tensor = tf.tensor1d([parseInt(celsius)]);
+            var prediccionTensor = modelo.predict(tensor);
+            // Usa dataSync() para obtener los datos de forma síncrona
+            var prediccionArray = prediccionTensor.dataSync();
+            // Accede al primer elemento del array para obtener el valor numérico
+            var prediccion = Math.round(prediccionArray[0]);
+            resultadoDiv.innerHTML = `${prediccion}°F son ${celsius}°C`;
+            // Limpia la memoria del tensor
+            tensor.dispose();
+            prediccionTensor.dispose();
+          } catch (error) {
+              console.error("Error durante la predicción:", error);
+              resultadoDiv.innerHTML = "Error al realizar la predicción.";
+          }
+        } else {
+          resultadoDiv.innerHTML = "Cargando modelo...";
+        }
+      }
+      // Llamar a cambiarCelsius al inicio para mostrar el valor inicial
+      document.addEventListener('DOMContentLoaded', (event) => {
+        cambiarCelsius();
+      });
+    </script>
+  </body>
+</html>
