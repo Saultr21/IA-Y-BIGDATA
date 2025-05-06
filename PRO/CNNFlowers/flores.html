@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Clasificador de Flores</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <style>
+      body { background-color: #f8f9fa; }
+      .container { max-width: 800px; margin: 40px auto; padding: 20px; background-color: #fff; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+      #preview { max-height: 300px; margin-bottom: 20px; }
+      #resultado { font-weight: bold; font-size: 1.25rem; text-align: center; margin-top: 20px; }
+    </style>
+  </head>
+  <body>
+    <div class="container text-center">
+      <h1 class="mb-4">Clasificador de Flores con TensorFlow.js</h1>
+      <p class="mb-4">Selecciona una imagen de flor para predecir su clase.</p>
+
+      <input type="file" id="input-imagen" accept="image/*" class="form-control mb-3">
+      <img id="preview" src="" class="img-fluid d-none" alt="Vista previa">
+      <div id="resultado">Aún no hay predicción.</div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.22.0/dist/tf.min.js"></script>
+    <script>
+      let model; // Cambiado de 'modelo' a 'model' para consistencia
+      const classNames = ['margarita','diente de león','rosa','girasol','tulipán'];
+
+      // Cargar modelo al iniciar
+      (async () => {
+        try {
+          model = await tf.loadGraphModel('web_model/model.json');
+          console.log('Modelo (GraphModel) cargado');
+          document.getElementById('resultado').innerText = 'Modelo cargado. Selecciona una imagen.';
+        } catch (err) {
+          console.error('Error cargando el modelo:', err);
+          document.getElementById('resultado').innerText = 'No se pudo cargar el modelo.';
+        }
+      })();
+
+      // Función para manejar la selección de archivo
+      document.getElementById('input-imagen').addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        if (!file || !model) {
+            console.log("Archivo o modelo no listo");
+            return;
+        }
+
+        // Mostrar vista previa
+        const reader = new FileReader();
+        reader.onload = async (evt) => { // Hacer esta función async
+          document.getElementById('preview').src = evt.target.result;
+          document.getElementById('preview').classList.remove('d-none');
+          document.getElementById('resultado').innerText = 'Procesando imagen...';
+
+          // Preprocesar y predecir
+          try {
+            const imgElement = document.getElementById('preview');
+            // Asegurarse que la imagen esté cargada antes de usarla con tf.browser.fromPixels
+            await new Promise(resolve => imgElement.onload = resolve);
+
+            let tensor = tf.browser.fromPixels(imgElement)
+              .resizeNearestNeighbor([224, 224]) 
+              .toFloat()
+              .div(tf.scalar(255.0))      
+              .expandDims(); 
+
+            const predictions = model.execute(tensor); 
+            const predictionData = await predictions.data(); 
+            tensor.dispose(); 
+            predictions.dispose(); 
+
+            const predictedIndex = tf.argMax(predictionData).dataSync()[0];
+            const predictedClass = classNames[predictedIndex];
+            const confidence = predictionData[predictedIndex];
+
+            document.getElementById('resultado').innerText =
+              `Predicción: ${predictedClass} (Confianza: ${confidence.toFixed(2)})`;
+
+          } catch (error) {
+            console.error("Error durante la predicción:", error);
+            document.getElementById('resultado').innerText = 'Error al procesar la imagen.';
+          }
+        }
+        reader.readAsDataURL(file);
+      });
+    </script>
+  </body>
+</html>
